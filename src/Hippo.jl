@@ -42,6 +42,7 @@ function predict(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{F
     B̂ = model.B̂
     Ĉ = model.Ĉ
     Xₒ = model.Xₒ
+    uₒ = model.uₒ
     number_of_hidden_states = model.n;
 
     # build the time array -
@@ -60,10 +61,6 @@ function predict(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{F
     for i ∈ 1:number_of_hidden_states
         X[1,i] = Xₒ[i];
     end
-
-    # update the output initial state -
-    Y[1] = Xₒ[1];
-    @show Y[1];
 
     # main loop -
     for i ∈ 2:number_of_time_steps
@@ -111,6 +108,7 @@ function solve(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{Flo
     Ĉ = model.Ĉ
     D̂ = model.D̂
     Xₒ = model.Xₒ
+    uₒ = model.uₒ;
     number_of_hidden_states = model.n;
 
     # build the time array -
@@ -127,6 +125,10 @@ function solve(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{Flo
     for i ∈ 1:number_of_hidden_states
         X[1,i] = Xₒ[i];
     end
+
+    # update the output initial state -
+    Y[1] = uₒ;
+    @show Y[1];
 
     # main loop -
     for i ∈ 2:number_of_time_steps

@@ -64,6 +64,7 @@ function build(modeltype::Type{MySISOLegSHiPPOModel}, data::NamedTuple)::MySISOL
     model.D̂ = D̂;
     model.n = number_of_hidden_states;
     model.Xₒ = B̂*uₒ;
+    model.uₒ = uₒ; # set the initial input to the first element of the array
 
     # return -
     return model;

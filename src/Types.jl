@@ -24,6 +24,7 @@ mutable struct MySISOLegSHiPPOModel <: AbstractS4HiPPOModel
     D̂::Array{Float64,1} # Discretized feedforward matrix
     n::Int # Number of hidden states
     Xₒ::Array{Float64,1} # Initial conditions
+    uₒ::Float64;
 
     # constructor -
     MySISOLegSHiPPOModel() = new();
