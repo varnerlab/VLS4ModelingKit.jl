@@ -31,12 +31,13 @@ function build(modeltype::Type{MySISOLegSHiPPOModel}, data::NamedTuple)::MySISOL
     for i ∈ 1:number_of_hidden_states
         for k ∈ 1:number_of_hidden_states
         
-            a = -sqrt((2*i+1))*sqrt((2*k+1));
+            a = sqrt((2*i+1))*sqrt((2*k+1));
             b = nothing;
             if (i > k)
                 b = 1;
             elseif (i == k)
-                b = (i+1)/(2*i+1);
+                #b = (i+1)/(2*i+1);
+                b = (i+1);
             else
                 b = 0
             end
