@@ -40,7 +40,7 @@ function build(modeltype::Type{MySISOLegSHiPPOModel}, data::NamedTuple)::MySISOL
             else
                 b = 0
             end
-            A[i,j] = a*b;
+            A[i,k] = a*b;
         end
     end
 
