@@ -76,7 +76,7 @@ function predict(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{F
         if (abs(Y[i]) ≥ B*(1+α*randn()))
             for k ∈ 1:number_of_hidden_states
                 #X[i,k] = Xₒ[k]*(1+β*randn()); # jump back to the last stable state
-                X[i,k] = Xₒ[k]*0.5;
+                X[i,k] = Xₒ[k]*0.99; # reset the state
             end
         end
     end
