@@ -55,10 +55,14 @@ function predict(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{F
     Y = zeros(number_of_time_steps);
     X = zeros(number_of_time_steps, number_of_hidden_states);
 
-    # update the initial state -
+
+    # update the hidden initial state -
     for i ∈ 1:number_of_hidden_states
         X[1,i] = Xₒ[i];
     end
+
+    # update the output initial state -
+    Y[1] = dot(Ĉ, X[1,:]);
 
     # main loop -
     for i ∈ 2:number_of_time_steps
