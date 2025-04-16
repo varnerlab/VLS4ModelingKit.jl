@@ -62,7 +62,7 @@ function predict(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{F
     end
 
     # update the output initial state -
-    Y[1] = dot(Ĉ, X[1,:]);
+    Y[1] = Xₒ[1];
 
     # main loop -
     for i ∈ 2:number_of_time_steps
