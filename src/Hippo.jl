@@ -62,6 +62,9 @@ function generate(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{
         X[1,i] = Xₒ[i];
     end
 
+    # store Y -
+    Y[1] = uₒ;
+
     # main loop -
     for i ∈ 2:number_of_time_steps
         
