@@ -34,7 +34,7 @@ The function returns the time array, the hidden state array and the output array
 ### Returns
 - `Tuple`: A tuple of the time array `T`, hidden state array `X` and the output array `Y`.
 """
-function predict(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{Float64,1};
+function generate(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{Float64,1};
     S::Int64 = 10, B::Float64 = 40.0, α::Float64 = 0.25, β::Float64 = 0.10)::Tuple
     
     # initialize -
