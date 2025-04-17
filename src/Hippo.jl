@@ -38,10 +38,9 @@ function predict(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{F
     S::Int64 = 10, B::Float64 = 40.0, α::Float64 = 0.25, β::Float64 = 0.10)::Tuple
     
     # initialize -
-    Â = model.Â
-    B̂ = model.B̂
-    Ĉ = model.Ĉ
-    Xₒ = model.Xₒ
+    Ā = model.Ā
+    B̄ = model.B̄
+    C̄ = model.C̄
     uₒ = model.uₒ
     number_of_hidden_states = model.n;
 
@@ -58,6 +57,7 @@ function predict(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{F
 
 
     # update the hidden initial state -
+    Xₒ = B̄*uₒ;
     for i ∈ 1:number_of_hidden_states
         X[1,i] = Xₒ[i];
     end
@@ -71,8 +71,8 @@ function predict(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{F
         # u = Y[i-1]; # get the input
 
         # update the state and output -
-        X[i,:] = Â*X[i-1,:]+B̂*u;
-        Y[i] = dot(Ĉ, X[i,:]);
+        X[i,:] = Ā*X[i-1,:]+B̄*u;
+        Y[i] = dot(C̄, X[i,:]);
 
         # ok, so we some stability issues here, let's try to fix it -
         if (abs(Y[i]) ≥ B*(1+α*randn()))
@@ -103,11 +103,10 @@ bilinear discretization. The function returns the time array, the hidden state a
 function solve(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{Float64})::Tuple
 
     # initialize -
-    Â = model.Â
-    B̂ = model.B̂
-    Ĉ = model.Ĉ
-    D̂ = model.D̂
-    Xₒ = model.Xₒ
+    Ā = model.Ā
+    B̄ = model.B̄
+    C̄ = model.C̄
+    D̄ = model.D̄
     uₒ = model.uₒ;
     number_of_hidden_states = model.n;
 
@@ -122,18 +121,19 @@ function solve(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{Flo
     Y = zeros(number_of_time_steps);
     X = zeros(number_of_time_steps, number_of_hidden_states);
 
+    # Store the start state B*uₒ 
+    Xₒ = B̄*uₒ;
     for i ∈ 1:number_of_hidden_states
         X[1,i] = Xₒ[i];
     end
 
     # update the output initial state -
     Y[1] = uₒ;
-    @show Y[1];
 
     # main loop -
     for i ∈ 2:number_of_time_steps
-        X[i,:] = Â*X[i-1,:]+B̂*signal[i-1];
-        Y[i] = dot(Ĉ, X[i,:]);
+        X[i,:] = Ā*X[i-1,:]+B̄*signal[i-1];
+        Y[i] = dot(C̄, X[i,:]);
     end
 
     # return the time and state arrays -
@@ -161,10 +161,10 @@ function learn(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{Flo
     method = LBFGS())
     
     # initialize -
-    p = model.Ĉ;
+    p = model.C̄;
  
     # solve the model to get the initial guess -
-    (T, X, Y) = solve(model, tspan, signal);
+    (_, X, _) = solve(model, tspan, signal);
 
     # setup the objective function -
     loss(p) = _hippo_objective_function(p,signal,X);
@@ -180,7 +180,7 @@ function learn(model::MySISOLegSHiPPOModel, tspan::NamedTuple,
     inputsignal::Array{Float64}, outputsignal::Array{Float64}; method = LBFGS())
     
     # initialize -
-    p = model.Ĉ;
+    p = model.C̄;
  
     # solve the model to get the initial guess -
     (_, X, _) = solve(model, tspan, inputsignal); # use SPY to drive the model``

@@ -36,7 +36,7 @@ function build(modeltype::Type{MySISOLegSHiPPOModel}, data::NamedTuple)::MySISOL
             if (i > k)
                 b = 1;
             elseif (i == k)
-                b = (i+1)/(2*i+1);
+                b = (i+1)/(2*i+1); # not sure - why do I have this?
             else
                 b = 0
             end
@@ -50,20 +50,18 @@ function build(modeltype::Type{MySISOLegSHiPPOModel}, data::NamedTuple)::MySISOL
         B[i] = (2*i+1) |> sqrt
     end
 
-
     # discretize the arrays using the Bilinear method -
-    Â = inv((I - (Δt/2)*A))*(I + (Δt/2)*A);
-    B̂ = inv((I - (Δt/2)*A))*(Δt)*B;
-    Ĉ = C; # initialize a random C matrix (user can update this later)
-    D̂ = zeros(number_of_hidden_states); # initialize a zero D matrix (user can update this later)
+    Ā = inv((I - (Δt/2)*A))*(I + (Δt/2)*A);
+    B̄ = inv((I - (Δt/2)*A))*(Δt)*B;
+    C̄ = C; # initialize a random C matrix (user can update this later)
+    D̄ = zeros(number_of_hidden_states); # initialize a zero D matrix (user can update this later)
 
     # set the values -
-    model.Â = Â;
-    model.B̂ = B̂;
-    model.Ĉ = Ĉ;
-    model.D̂ = D̂;
+    model.Ā = Ā;
+    model.B̄ = B̄;
+    model.C̄ = C̄;
+    model.D̄ = D̄;
     model.n = number_of_hidden_states;
-    model.Xₒ = B̂*uₒ;
     model.uₒ = uₒ; # set the initial input to the first element of the array
 
     # return -

@@ -18,12 +18,11 @@ a corresponding `build` method.
 mutable struct MySISOLegSHiPPOModel <: AbstractS4HiPPOModel
 
     # data -
-    Â::Array{Float64,2} # Discretized state transition matrix 
-    B̂::Array{Float64,1} # Discretized input matrix
-    Ĉ::Array{Float64,1} # Discretized output matrix
-    D̂::Array{Float64,1} # Discretized feedforward matrix
+    Ā::Array{Float64,2} # Discretized state transition matrix 
+    B̄::Array{Float64,1} # Discretized input matrix
+    C̄::Array{Float64,1} # Discretized output matrix
+    D̄::Array{Float64,1} # Discretized feedforward matrix
     n::Int # Number of hidden states
-    Xₒ::Array{Float64,1} # Initial conditions
     uₒ::Float64;
 
     # constructor -
