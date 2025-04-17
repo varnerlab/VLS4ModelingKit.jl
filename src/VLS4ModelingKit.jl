@@ -8,7 +8,7 @@ module VLS4ModelingKit
     export MySISOLegSHiPPOModel
 
     # export methods
-    export build, solve, learn, generate
+    export build, solve, learn, generate, predict
 
 
 

@@ -34,7 +34,7 @@ The function returns the time array, the hidden state array and the output array
 ### Returns
 - `Tuple`: A tuple of the time array `T`, hidden state array `X` and the output array `Y`.
 """
-function generate(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{Float64,1};
+function predict(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{Float64,1};
     S::Int64 = 10, B::Float64 = 40.0, α::Float64 = 0.25, β::Float64 = 0.10)::Tuple
     
     # initialize -
@@ -83,6 +83,53 @@ function generate(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{
                 X[i,k] = Xₒ[k]*(1+β*randn()); # jump back to the last stable state
             end
         end
+    end
+
+    # return the time and state arrays -
+    return (T, X, Y);
+end
+
+function generate(model::MySISOLegSHiPPOModel, tspan::NamedTuple, signal::Array{Float64,1}; S::Int64 = 10)::Tuple
+    
+    # initialize -
+    Ā = model.Ā
+    B̄ = model.B̄
+    C̄ = model.C̄
+    uₒ = model.uₒ
+    number_of_hidden_states = model.n;
+
+    # build the time array -
+    tₒ = tspan.start;
+    tₙ = tspan.stop;
+    dt = tspan.step;
+    T = range(tₒ, step=dt, stop=tₙ) |> collect
+
+    # initialize the state and output arrays -
+    number_of_time_steps = length(T);
+    Y = zeros(number_of_time_steps);
+    X = zeros(number_of_time_steps, number_of_hidden_states);
+
+
+    # update the hidden initial state -
+    Xₒ = B̄*uₒ;
+    for i ∈ 1:number_of_hidden_states
+        X[1,i] = Xₒ[i];
+    end
+
+    # store Y -
+    Y[1] = uₒ;
+
+    # main loop -
+    for i ∈ 2:number_of_time_steps
+        
+        # what index in the signal array should we use?
+        j = ((i-2) % S) + 1;
+        u = signal[j]; # get the input 
+        # u = Y[i-1]; # get the input
+
+        # update the state and output -
+        X[i,:] = Ā*X[i-1,:]+B̄*u;
+        Y[i] = dot(C̄, X[i,:]);
     end
 
     # return the time and state arrays -
