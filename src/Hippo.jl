@@ -10,7 +10,7 @@ function _hippo_objective_function(p, signal, hidden);
     end
 
     # compute the error -
-    error_term = sum((signal - Ŷ).^2);
+    error_term = (1/number_of_time_steps)*sum((signal - Ŷ).^2);
 
     # return -
     return error_term;
